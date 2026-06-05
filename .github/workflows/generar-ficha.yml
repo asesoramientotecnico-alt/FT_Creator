@@ -14,12 +14,14 @@ on:
       - "templates/**"
       - "scripts/**"
       - "requirements.txt"
+      - ".github/workflows/generar-ficha.yml"
   pull_request:
     paths:
       - "familias/**"
       - "normas/**"
       - "templates/**"
       - "scripts/**"
+      - ".github/workflows/generar-ficha.yml"
   workflow_dispatch:
     inputs:
       familia:
@@ -38,11 +40,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Instalar dependencias
-        # En el runner ya conviven Python 3.11+ y Chromium (instalados una vez,
-        # ver SETUP.md). Este paso solo asegura las libs de Python.
         run: |
           python3 -m pip install --upgrade pip
           python3 -m pip install -r requirements.txt
+
+      - name: Instalar navegador Chromium (Playwright)
+        # Idempotente: descarga el binario solo la primera vez.
+        run: python3 -m playwright install chromium
 
       - name: Validar schema de familias
         run: python3 scripts/validar.py
