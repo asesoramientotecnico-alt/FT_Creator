@@ -1,21 +1,33 @@
-# Python
-__pycache__/
-*.py[cod]
-.venv/
-venv/
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Env
 .env
+.env.local
+.env*.local
 
-# Salidas generadas (borradores pre-validación: artifacts, no se versionan)
-output/borrador/*.html
-output/borrador/*.pdf
-output/borrador/*.png
+# Vercel
+.vercel
 
-# PDFs de normas: pesados y con copyright; no se versionan (ver BRIEF)
-normas/pdf/*.pdf
-
-# Cuerpo de PR temporal (Gate 1)
-_pr_body.md
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
 
 # SO / editor
 .DS_Store
 *.swp
+.idea/
+.vscode/
+
+# Test
+coverage/
