@@ -11,19 +11,10 @@ function baseUrl(): string {
 }
 
 async function getBrowser() {
-  const isVercel = !!process.env.VERCEL;
-  if (isVercel) {
-    const chromium = (await import("@sparticuz/chromium-min")).default;
-    const puppeteer = await import("puppeteer-core");
-    const pack = process.env.CHROMIUM_PACK_URL!;
-    return puppeteer.launch({
-      args: chromium.args,
-      executablePath: await chromium.executablePath(pack),
-      headless: true,
-    });
-  }
-  // Local: usar Chrome/Chromium del sistema si existe.
   const puppeteer = await import("puppeteer-core");
+  const fs = await import("node:fs");
+
+  // 1) Chrome del sistema si CHROME_PATH o ruta estándar existe (dev local rápido).
   const candidates = [
     process.env.CHROME_PATH,
     "/usr/bin/google-chrome",
@@ -31,16 +22,26 @@ async function getBrowser() {
     "/usr/bin/chromium-browser",
     "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
   ].filter(Boolean) as string[];
-  const fs = await import("node:fs");
-  const executablePath = candidates.find((p) => {
+  const systemPath = candidates.find((p) => {
     try { return fs.statSync(p).isFile(); } catch { return false; }
   });
-  if (!executablePath) {
+  if (systemPath) {
+    return puppeteer.launch({ executablePath: systemPath, headless: true, args: ["--no-sandbox"] });
+  }
+
+  // 2) Chromium serverless (Vercel y fallback local): descarga el pack desde CHROMIUM_PACK_URL.
+  const chromium = (await import("@sparticuz/chromium-min")).default;
+  const pack = process.env.CHROMIUM_PACK_URL;
+  if (!pack) {
     throw new Error(
-      "No se encontró Chromium local. Definí CHROME_PATH en .env.local o ejecutá en Vercel."
+      "PDF: definí CHROME_PATH (Chrome local) o CHROMIUM_PACK_URL (pack de @sparticuz/chromium-min)."
     );
   }
-  return puppeteer.launch({ executablePath, headless: true, args: ["--no-sandbox"] });
+  return puppeteer.launch({
+    args: chromium.args,
+    executablePath: await chromium.executablePath(pack),
+    headless: true,
+  });
 }
 
 export async function GET(

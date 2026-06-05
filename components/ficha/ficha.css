@@ -10,7 +10,7 @@
   --gris:        #f4f4f4;
   --gris-medio:  #dcdcdc;
   width: 210mm;
-  min-height: 297mm;
+  height: 297mm;
   background: var(--blanco);
   margin: 0 auto 12mm;
   display: flex;
@@ -21,6 +21,7 @@
   color: var(--texto);
   box-sizing: border-box;
   position: relative;
+  page-break-after: avoid;
 }
 .ficha *, .ficha *::before, .ficha *::after { box-sizing: border-box; }
 

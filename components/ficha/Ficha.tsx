@@ -134,29 +134,27 @@ export function Ficha({ data, borrador = false }: { data: FichaData; borrador?: 
             </tr>
           </thead>
           <tbody>
-            {series.map((s) => {
+            {series.flatMap((s) => {
               const filas = s.tabla.filas as FilaTabla[];
-              return (
-                <>
-                  <tr key={`sep-${s.id}`} className="serie-sep">
-                    <td colSpan={Math.max(1, columnas.length - 3)}>
-                      {`Serie ${s.sistema === "metrico" ? "Métrica" : "Whitworth BSW"} — ${s.norma.codigo}`}
+              return [
+                <tr key={`sep-${s.id}`} className="serie-sep">
+                  <td colSpan={Math.max(1, columnas.length - 3)}>
+                    {`Serie ${s.sistema === "metrico" ? "Métrica" : "Whitworth BSW"} — ${s.norma.codigo}`}
+                  </td>
+                  {s.nota && (
+                    <td className="serie-nota" colSpan={3}>
+                      {s.nota}
                     </td>
-                    {s.nota && (
-                      <td className="serie-nota" colSpan={3}>
-                        {s.nota}
-                      </td>
-                    )}
+                  )}
+                </tr>,
+                ...filas.map((fila, i) => (
+                  <tr key={`${s.id}-${i}`}>
+                    {columnas.map((c) => (
+                      <Celda key={c.id} col={c} val={fila[c.id]} />
+                    ))}
                   </tr>
-                  {filas.map((fila, i) => (
-                    <tr key={`${s.id}-${i}`}>
-                      {columnas.map((c) => (
-                        <Celda key={c.id} col={c} val={fila[c.id]} />
-                      ))}
-                    </tr>
-                  ))}
-                </>
-              );
+                )),
+              ];
             })}
           </tbody>
         </table>
