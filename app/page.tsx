@@ -26,22 +26,20 @@ export default async function Home() {
 
       <nav style={{ display: "flex", gap: 16, marginBottom: 16, fontSize: 14 }}>
         <Link href="/normas">Normas</Link>
-        <Link href="/">Familias</Link>
+        <Link href="/familias">Familias</Link>
       </nav>
 
-      <h2 style={{ marginTop: 24, marginBottom: 8, fontSize: 18 }}>Familias</h2>
+      <h2 style={{ marginTop: 24, marginBottom: 8, fontSize: 18 }}>Familias recientes</h2>
       <ul>
-        {(data ?? []).map((f) => (
+        {(data ?? []).slice(0, 8).map((f) => (
           <li key={f.slug}>
             <Link href={`/familias/${f.slug}`}>
               {f.categoria_num}.{f.subcategoria_num} — {f.subcategoria_nombre}
             </Link>{" "}
-            <small style={{ color: "#999" }}>
-              ({f.estado}) · <a href={`/api/familias/${f.slug}/pdf`}>PDF</a>
-            </small>
+            <small style={{ color: "#999" }}>({f.estado})</small>
           </li>
         ))}
-        {(!data || data.length === 0) && <li style={{ color: "#999" }}>No hay familias cargadas. Correr `npm run seed`.</li>}
+        {(!data || data.length === 0) && <li style={{ color: "#999" }}>No hay familias. <Link href="/familias/nueva">Crear una →</Link></li>}
       </ul>
     </main>
   );
