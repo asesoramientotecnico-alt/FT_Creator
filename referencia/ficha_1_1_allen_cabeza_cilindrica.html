@@ -1,0 +1,521 @@
+<!-- ══════════════════════════════════════
+     FICHA 1.1 — ALLEN CABEZA CILÍNDRICA
+     id="allen-cabeza-cilindrica"
+══════════════════════════════════════ -->
+
+<style>
+  /* ── Estilos propios de ficha (no repiten los globales) ── */
+  .ficha {
+    width: 210mm;
+    min-height: 297mm;
+    background: var(--blanco);
+    margin: 0 auto 12mm;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+    page-break-before: always;
+    overflow: hidden;
+  }
+
+  .ficha__header {
+    background: var(--azul);
+    padding: 5mm 14mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .ficha__header-cat {
+    color: rgba(255,255,255,0.9);
+    font-size: 8.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: 500;
+  }
+
+  .ficha__header-sub {
+    color: white;
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 13pt;
+    text-align: right;
+    line-height: 1.2;
+  }
+
+  .ficha__header-sub small {
+    display: block;
+    font-family: 'DM Sans', Arial, sans-serif;
+    font-size: 7.5pt;
+    font-weight: 300;
+    opacity: 0.75;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── Cuerpo superior: SVG + info ── */
+  .ficha__body {
+    display: flex;
+    flex: 1;
+    border-bottom: 1.5px solid var(--azul);
+  }
+
+  .ficha__plano {
+    width: 40%;
+    border-right: 1px solid #ddd;
+    padding: 7mm 6mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #fafafa;
+  }
+
+  .ficha__plano-label {
+    font-size: 6.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #aaa;
+    margin-bottom: 4mm;
+    align-self: flex-start;
+  }
+
+  .ficha__info {
+    flex: 1;
+    padding: 7mm 10mm 7mm 8mm;
+    display: flex;
+    flex-direction: column;
+    gap: 3.5mm;
+  }
+
+  .ficha__nombre-en {
+    font-size: 12pt;
+    font-weight: 600;
+    color: var(--texto);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin-bottom: 1mm;
+  }
+
+  .ficha__divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, var(--azul) 30%, transparent);
+    margin: 1mm 0;
+  }
+
+  .ficha__info-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5mm;
+  }
+
+  .ficha__info-label {
+    font-size: 6.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+    color: var(--azul);
+    font-weight: 700;
+  }
+
+  .ficha__info-val {
+    font-size: 8.5pt;
+    color: var(--texto);
+    line-height: 1.5;
+  }
+
+  .ficha__info-val .norma {
+    display: inline-block;
+    background: var(--azul-claro);
+    color: var(--azul);
+    font-size: 7.5pt;
+    font-weight: 600;
+    padding: 0.5mm 2.5mm;
+    border-radius: 2px;
+    margin-right: 1.5mm;
+    margin-bottom: 1mm;
+  }
+
+  .ficha__desc {
+    font-size: 8pt;
+    color: #555;
+    line-height: 1.6;
+    border-left: 2.5px solid var(--azul-claro);
+    padding-left: 3mm;
+    margin-top: 1mm;
+  }
+
+  .ficha__apps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5mm;
+    margin-top: 1mm;
+  }
+
+  .ficha__app-tag {
+    font-size: 7pt;
+    background: var(--gris);
+    color: #555;
+    padding: 0.8mm 2.5mm;
+    border-radius: 2px;
+    border: 0.5px solid var(--gris-medio);
+  }
+
+  /* ── Tabla de cotas ── */
+  .ficha__tabla-wrap {
+    padding: 6mm 14mm 8mm;
+    flex-shrink: 0;
+  }
+
+  .ficha__tabla-titulo {
+    font-size: 7pt;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--azul);
+    font-weight: 700;
+    margin-bottom: 3mm;
+    display: flex;
+    align-items: center;
+    gap: 3mm;
+  }
+
+  .ficha__tabla-titulo::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--azul-claro);
+  }
+
+  table.cotas {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 7.8pt;
+  }
+
+  table.cotas thead tr {
+    background: var(--azul);
+    color: white;
+  }
+
+  table.cotas thead th {
+    padding: 2.8mm 3mm;
+    text-align: center;
+    font-weight: 700;
+    font-size: 8pt;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    border-right: 1px solid rgba(255,255,255,0.15);
+    vertical-align: bottom;
+    line-height: 1.3;
+  }
+
+  table.cotas thead th:first-child {
+    text-align: left;
+    padding-left: 4mm;
+    border-right: 1px solid rgba(255,255,255,0.15);
+  }
+
+  table.cotas thead th:last-child {
+    border-right: none;
+  }
+
+  table.cotas tbody tr {
+    border-bottom: 0.5px solid #e0e0e0;
+  }
+
+  table.cotas tbody td {
+    border-right: 0.5px solid #e8e8e8;
+  }
+
+  table.cotas tbody td:last-child {
+    border-right: none;
+  }
+
+  table.cotas tbody tr:nth-child(even) {
+    background: var(--gris);
+  }
+
+  table.cotas tbody tr:hover {
+    background: var(--azul-claro);
+  }
+
+  table.cotas td {
+    padding: 2mm 3mm;
+    text-align: center;
+    color: var(--texto);
+  }
+
+  table.cotas td:first-child {
+    text-align: left;
+    padding-left: 4mm;
+    font-weight: 600;
+    color: var(--azul);
+    font-size: 8.5pt;
+  }
+
+  /* Separador serie */
+  tr.serie-sep td {
+    background: var(--azul);
+    color: white !important;
+    font-size: 7pt;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700 !important;
+    padding: 1.8mm 4mm !important;
+    text-align: left !important;
+  }
+
+  /* Pie de ficha */
+  .ficha__pie {
+    border-top: 1px solid var(--gris-medio);
+    padding: 3mm 14mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .ficha__pie-nota {
+    font-size: 6.5pt;
+    color: #aaa;
+    font-style: italic;
+  }
+
+  .ficha__pie-pag {
+    font-size: 8pt;
+    color: var(--azul);
+    font-weight: 600;
+  }
+</style>
+
+<div class="ficha" id="allen-cabeza-cilindrica">
+
+  <!-- HEADER -->
+  <div class="ficha__header">
+    <div class="ficha__header-cat">1 — Allen de acero inoxidable</div>
+    <div class="ficha__header-sub">
+      1.1 Cabeza Cilíndrica
+      <small>Socket Head Cap Screw</small>
+    </div>
+  </div>
+
+  <!-- CUERPO: PLANO + INFO -->
+  <div class="ficha__body">
+
+    <!-- SVG PLANO TÉCNICO -->
+    <div class="ficha__plano">
+      <div class="ficha__plano-label">Vista de perfil — plano técnico</div>
+
+      <svg viewBox="0 0 280 310" xmlns="http://www.w3.org/2000/svg"
+           style="width:100%;max-width:68mm;font-family:'DM Sans',Arial,sans-serif;">
+
+        <!-- ─────── PIEZAS ─────── -->
+        <!-- Vástago (rosca) -->
+        <rect x="110" y="145" width="60" height="115" fill="white" stroke="#222" stroke-width="1.4"/>
+        <!-- Líneas de rosca en vástago -->
+        <line x1="110" y1="155" x2="170" y2="155" stroke="#aaa" stroke-width="0.4" stroke-dasharray="2,1.5"/>
+        <line x1="110" y1="163" x2="170" y2="163" stroke="#aaa" stroke-width="0.4" stroke-dasharray="2,1.5"/>
+        <line x1="110" y1="171" x2="170" y2="171" stroke="#aaa" stroke-width="0.4" stroke-dasharray="2,1.5"/>
+        <line x1="110" y1="179" x2="170" y2="179" stroke="#aaa" stroke-width="0.4" stroke-dasharray="2,1.5"/>
+        <line x1="110" y1="187" x2="170" y2="187" stroke="#aaa" stroke-width="0.4" stroke-dasharray="2,1.5"/>
+        <line x1="110" y1="195" x2="170" y2="195" stroke="#aaa" stroke-width="0.4" stroke-dasharray="2,1.5"/>
+        <line x1="110" y1="203" x2="170" y2="203" stroke="#aaa" stroke-width="0.4" stroke-dasharray="2,1.5"/>
+        <line x1="110" y1="211" x2="170" y2="211" stroke="#aaa" stroke-width="0.4" stroke-dasharray="2,1.5"/>
+        <line x1="110" y1="219" x2="170" y2="219" stroke="#aaa" stroke-width="0.4" stroke-dasharray="2,1.5"/>
+        <line x1="110" y1="227" x2="170" y2="227" stroke="#aaa" stroke-width="0.4" stroke-dasharray="2,1.5"/>
+        <line x1="110" y1="235" x2="170" y2="235" stroke="#aaa" stroke-width="0.4" stroke-dasharray="2,1.5"/>
+        <line x1="110" y1="243" x2="170" y2="243" stroke="#aaa" stroke-width="0.4" stroke-dasharray="2,1.5"/>
+        <!-- Punta plana vástago -->
+        <line x1="110" y1="260" x2="170" y2="260" stroke="#222" stroke-width="1.4"/>
+
+        <!-- Cabeza cilíndrica -->
+        <rect x="88" y="75" width="104" height="70" fill="white" stroke="#222" stroke-width="1.4"/>
+
+        <!-- Hexágono interior (allen) — representado como ranura en vista lateral -->
+        <line x1="105" y1="75" x2="105" y2="95" stroke="#555" stroke-width="0.8"/>
+        <line x1="175" y1="75" x2="175" y2="95" stroke="#555" stroke-width="0.8"/>
+        <line x1="105" y1="95" x2="175" y2="95" stroke="#555" stroke-width="1"/>
+        <!-- Sombreado llave -->
+        <rect x="105" y="75" width="70" height="20" fill="#f0f0f0" stroke="none" opacity="0.7"/>
+
+        <!-- Línea central (eje) -->
+        <line x1="140" y1="30" x2="140" y2="280"
+              stroke="#003DA5" stroke-width="0.6"
+              stroke-dasharray="6,3,1,3"/>
+
+        <!-- ─────── COTAS ─────── -->
+        <!-- Flecha helper defs -->
+        <defs>
+          <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#333"/>
+          </marker>
+          <marker id="arrL" markerWidth="6" markerHeight="6" refX="1" refY="3" orient="auto">
+            <path d="M6,0 L0,3 L6,6 Z" fill="#333"/>
+          </marker>
+        </defs>
+
+        <!-- COTA d — diámetro vástago (abajo, horizontal) -->
+        <line x1="110" y1="275" x2="170" y2="275" stroke="#333" stroke-width="0.7"
+              marker-start="url(#arrL)" marker-end="url(#arr)"/>
+        <line x1="110" y1="260" x2="110" y2="278" stroke="#333" stroke-width="0.5" stroke-dasharray="2,1.5"/>
+        <line x1="170" y1="260" x2="170" y2="278" stroke="#333" stroke-width="0.5" stroke-dasharray="2,1.5"/>
+        <text x="140" y="288" text-anchor="middle" font-size="9" fill="#222" font-weight="600" font-style="italic">d</text>
+
+        <!-- COTA dk — diámetro cabeza (arriba, horizontal) -->
+        <line x1="88" y1="58" x2="192" y2="58" stroke="#333" stroke-width="0.7"
+              marker-start="url(#arrL)" marker-end="url(#arr)"/>
+        <line x1="88" y1="58" x2="88" y2="76" stroke="#333" stroke-width="0.5" stroke-dasharray="2,1.5"/>
+        <line x1="192" y1="58" x2="192" y2="76" stroke="#333" stroke-width="0.5" stroke-dasharray="2,1.5"/>
+        <text x="140" y="52" text-anchor="middle" font-size="9" fill="#222" font-weight="600" font-style="italic">dk</text>
+
+        <!-- COTA k — altura cabeza (derecha, vertical) -->
+        <line x1="207" y1="75" x2="207" y2="145" stroke="#333" stroke-width="0.7"
+              marker-start="url(#arrL)" marker-end="url(#arr)"/>
+        <line x1="192" y1="75" x2="210" y2="75" stroke="#333" stroke-width="0.5" stroke-dasharray="2,1.5"/>
+        <line x1="170" y1="145" x2="210" y2="145" stroke="#333" stroke-width="0.5" stroke-dasharray="2,1.5"/>
+        <text x="222" y="113" text-anchor="middle" font-size="9" fill="#222" font-weight="600" font-style="italic">k</text>
+
+        <!-- COTA s — llave allen (izquierda, horizontal interior) -->
+        <line x1="105" y1="40" x2="175" y2="40" stroke="#333" stroke-width="0.7"
+              marker-start="url(#arrL)" marker-end="url(#arr)"/>
+        <line x1="105" y1="40" x2="105" y2="76" stroke="#333" stroke-width="0.5" stroke-dasharray="2,1.5"/>
+        <line x1="175" y1="40" x2="175" y2="76" stroke="#333" stroke-width="0.5" stroke-dasharray="2,1.5"/>
+        <text x="140" y="35" text-anchor="middle" font-size="8.5" fill="#555" font-style="italic">s</text>
+
+        <!-- COTA L — longitud total (izquierda, vertical) -->
+        <line x1="68" y1="75" x2="68" y2="260" stroke="#333" stroke-width="0.7"
+              marker-start="url(#arrL)" marker-end="url(#arr)"/>
+        <line x1="68" y1="75" x2="89" y2="75" stroke="#333" stroke-width="0.5" stroke-dasharray="2,1.5"/>
+        <line x1="68" y1="260" x2="110" y2="260" stroke="#333" stroke-width="0.5" stroke-dasharray="2,1.5"/>
+        <text x="50" y="172" text-anchor="middle" font-size="9" fill="#222" font-weight="600" font-style="italic"
+              transform="rotate(-90,50,172)">L</text>
+
+        <!-- Etiqueta norma -->
+        <rect x="4" y="4" width="60" height="13" rx="2" fill="#003DA5" opacity="0.9"/>
+        <text x="34" y="13.5" text-anchor="middle" font-size="7" fill="white" letter-spacing="0.5">DIN 912</text>
+      </svg>
+    </div>
+
+    <!-- INFO -->
+    <div class="ficha__info">
+      <div class="ficha__nombre-en">Socket Head Cap Screw</div>
+      <div class="ficha__divider"></div>
+
+      <div class="ficha__info-grupo">
+        <div class="ficha__info-label">Normas aplicables</div>
+        <div class="ficha__info-val">
+          <span class="norma">DIN 912</span>
+          <span class="norma">ISO 4762</span>
+          <span class="norma">ANSI B18.3</span>
+        </div>
+      </div>
+
+      <div class="ficha__info-grupo">
+        <div class="ficha__info-label">Materiales disponibles</div>
+        <div class="ficha__info-val">
+          A2 — AISI 304 / 304L<br>
+          A4 — AISI 316 / 316L
+        </div>
+      </div>
+
+      <div class="ficha__info-grupo">
+        <div class="ficha__info-label">Rosca</div>
+        <div class="ficha__info-val">
+          Métrica M3 — M20 · paso 0,5 a 2,5 mm<br>
+          Whitworth 1/8" — 3/4"
+        </div>
+      </div>
+
+      <div class="ficha__info-grupo">
+        <div class="ficha__info-label">Accionamiento</div>
+        <div class="ficha__info-val">Hexagonal interior (llave allen)</div>
+      </div>
+
+      <div class="ficha__info-grupo">
+        <div class="ficha__info-label">Descripción</div>
+        <div class="ficha__desc">
+          Tornillo inoxidable con cabeza cilíndrica y accionamiento hexagonal interno.
+          Alta resistencia mecánica. Ideal para uniones estructurales donde se requiere
+          bajo perfil y acceso axial. El accionamiento interior permite mayor par de
+          apriete con menor espacio lateral.
+        </div>
+      </div>
+
+      <div class="ficha__info-grupo">
+        <div class="ficha__info-label">Aplicaciones típicas</div>
+        <div class="ficha__apps">
+          <span class="ficha__app-tag">Maquinaria</span>
+          <span class="ficha__app-tag">Estructuras</span>
+          <span class="ficha__app-tag">Oil &amp; Gas</span>
+          <span class="ficha__app-tag">Ind. alimentaria</span>
+          <span class="ficha__app-tag">Náutica</span>
+          <span class="ficha__app-tag">Farmacéutica</span>
+        </div>
+      </div>
+
+      <div class="ficha__info-grupo" style="margin-top:auto;">
+        <div class="ficha__info-label">Presentación</div>
+        <div class="ficha__info-val">Pack 1 (20 un.) · Pack 2 (50 un.) · Pack 3 (100 un.)</div>
+      </div>
+    </div>
+
+  </div><!-- /ficha__body -->
+
+  <!-- TABLA DE COTAS -->
+  <div class="ficha__tabla-wrap">
+    <div class="ficha__tabla-titulo">Tabla de cotas y dimensiones</div>
+
+    <table class="cotas">
+      <thead>
+        <tr>
+          <th style="text-align:left;padding-left:4mm;min-width:18mm;">d<br><span style="font-size:6.5pt;font-weight:400;opacity:0.85;">Nominal</span></th>
+          <th>dk (mm)<br><span style="font-size:6.5pt;font-weight:400;opacity:0.85;">Ø cabeza</span></th>
+          <th>k (mm)<br><span style="font-size:6.5pt;font-weight:400;opacity:0.85;">Alt. cabeza</span></th>
+          <th>s (mm)<br><span style="font-size:6.5pt;font-weight:400;opacity:0.85;">Llave allen</span></th>
+          <th>L mín<br><span style="font-size:6.5pt;font-weight:400;opacity:0.85;">(mm)</span></th>
+          <th>L máx<br><span style="font-size:6.5pt;font-weight:400;opacity:0.85;">(mm)</span></th>
+          <th>Paso<br><span style="font-size:6.5pt;font-weight:400;opacity:0.85;">mm / TPI</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- SERIE MÉTRICA -->
+        <tr class="serie-sep">
+          <td colspan="4">Serie Métrica — DIN 912 / ISO 4762</td>
+          <td colspan="3" style="text-align:right;padding-right:4mm;opacity:0.8;">Tolerancia 6g · Paso normal (coarse)</td>
+        </tr>
+        <tr><td>M3</td><td>5,5</td><td>3</td><td>2,5</td><td>6</td><td>40</td><td>0,50</td></tr>
+        <tr><td>M4</td><td>7</td><td>4</td><td>3</td><td>8</td><td>60</td><td>0,70</td></tr>
+        <tr><td>M5</td><td>8,5</td><td>5</td><td>4</td><td>10</td><td>80</td><td>0,80</td></tr>
+        <tr><td>M6</td><td>10</td><td>6</td><td>5</td><td>12</td><td>100</td><td>1,00</td></tr>
+        <tr><td>M8</td><td>13</td><td>8</td><td>6</td><td>16</td><td>130</td><td>1,25</td></tr>
+        <tr><td>M10</td><td>16</td><td>10</td><td>8</td><td>20</td><td>150</td><td>1,50</td></tr>
+        <tr><td>M12</td><td>18</td><td>12</td><td>10</td><td>25</td><td>180</td><td>1,75</td></tr>
+        <tr><td>M14</td><td>21</td><td>14</td><td>12</td><td>30</td><td>180</td><td>2,00</td></tr>
+        <tr><td>M16</td><td>24</td><td>16</td><td>14</td><td>35</td><td>200</td><td>2,00</td></tr>
+        <tr><td>M20</td><td>30</td><td>20</td><td>17</td><td>45</td><td>200</td><td>2,50</td></tr>
+
+        <!-- SERIE WHITWORTH -->
+        <tr class="serie-sep">
+          <td colspan="4">Serie Whitworth BSW — ANSI B18.3 / BS 84</td>
+          <td colspan="3" style="text-align:right;padding-right:4mm;opacity:0.8;">TPI = hilos por pulgada</td>
+        </tr>
+        <tr><td>1/8"</td><td>5,5</td><td>3</td><td>2,5</td><td>6</td><td>25</td><td>40 TPI</td></tr>
+        <tr><td>3/16"</td><td>7</td><td>4</td><td>3</td><td>8</td><td>40</td><td>24 TPI</td></tr>
+        <tr><td>1/4"</td><td>9,5</td><td>5,5</td><td>4</td><td>10</td><td>60</td><td>20 TPI</td></tr>
+        <tr><td>5/16"</td><td>11</td><td>6,5</td><td>5</td><td>12</td><td>80</td><td>18 TPI</td></tr>
+        <tr><td>3/8"</td><td>14</td><td>8</td><td>6</td><td>16</td><td>100</td><td>16 TPI</td></tr>
+        <tr><td>1/2"</td><td>19</td><td>10</td><td>8</td><td>20</td><td>130</td><td>12 TPI</td></tr>
+        <tr><td>5/8"</td><td>22,5</td><td>12</td><td>10</td><td>25</td><td>150</td><td>11 TPI</td></tr>
+        <tr><td>3/4"</td><td>27</td><td>15</td><td>12</td><td>35</td><td>180</td><td>10 TPI</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PIE DE FICHA -->
+  <div class="ficha__pie">
+    <span class="ficha__pie-nota">
+      Datos orientativos. Confirmar disponibilidad y tolerancias con equipo técnico · famiq.com.ar
+    </span>
+    <span class="ficha__pie-pag">3</span>
+  </div>
+
+</div>
+<!-- ── FIN FICHA 1.1 ── -->

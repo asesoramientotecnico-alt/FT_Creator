@@ -1,0 +1,28 @@
+{#- ══════════════════════════════════════════════════════════════
+    Template de catálogo: portada + índice + concatenación de fichas.
+    STUB del milestone 1 — estructura mínima para que ensamblar.py
+    tenga contra qué renderizar. La portada/índice definitivos se
+    diseñan más adelante (no es objetivo de la sesión 1).
+
+    Contexto esperado:
+      css     : contenido de styles.css embebido (str)
+      fichas  : lista de fragmentos HTML de ficha ya renderizados (str)
+      indice  : lista de {num, nombre, pagina}
+    ══════════════════════════════════════════════════════════════ -#}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Catálogo FAMIQ — Bulonería en acero inoxidable</title>
+  <style>
+{{ css }}
+  </style>
+</head>
+<body class="catalogo">
+
+  {%- for f in fichas %}
+  {{ f | safe }}
+  {%- endfor %}
+
+</body>
+</html>

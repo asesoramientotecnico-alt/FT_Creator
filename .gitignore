@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Salidas generadas (borradores pre-validación: artifacts, no se versionan)
+output/borrador/*.html
+output/borrador/*.pdf
+output/borrador/*.png
+
+# PDFs de normas: pesados y con copyright; no se versionan (ver BRIEF)
+normas/pdf/*.pdf
+
+# SO / editor
+.DS_Store
+*.swp

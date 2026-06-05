@@ -1,0 +1,163 @@
+{#- ══════════════════════════════════════════════════════════════
+    Template de ficha individual. Derivado del prototipo de referencia
+    (ficha 1.1), limpio: sin contenteditable, sin botones de edición,
+    sin localStorage, sin emojis en los separadores de serie.
+
+    Contexto esperado:
+      ficha    : dict de la familia validada (ver scripts/schema.py)
+      svg      : contenido SVG del plano, ya embebido (str)
+      css      : contenido de styles.css, ya embebido (str)
+      pagina   : etiqueta de paginación (str), por defecto la subcategoría
+    ══════════════════════════════════════════════════════════════ -#}
+{%- macro multilinea(valor) -%}
+  {%- if valor is string -%}{{ valor }}
+  {%- else -%}{{ valor | join('<br>') | safe }}
+  {%- endif -%}
+{%- endmacro -%}
+{%- macro celda(col, valor) -%}
+  {%- if valor is mapping -%}
+    <span class="cota-tol"><span class="nom">{{ valor.nom | num_es(col.decimales) }}</span>
+    {%- if valor.max is not none and valor.min is not none -%}
+      <span class="mm">{{ valor.max | num_es(col.decimales) }} / {{ valor.min | num_es(col.decimales) }}</span>
+    {%- endif -%}</span>
+  {%- else -%}{{ valor | num_es(col.decimales) }}
+  {%- endif -%}
+{%- endmacro -%}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>{{ ficha.categoria.num }}.{{ ficha.subcategoria.num.split('.')[-1] }} — {{ ficha.nombre }}</title>
+  <style>
+{{ css }}
+  </style>
+</head>
+<body>
+
+<div class="ficha" id="{{ ficha.id }}">
+
+  <!-- HEADER -->
+  <div class="ficha__header">
+    <div class="ficha__header-cat">{{ ficha.categoria.num }} — {{ ficha.categoria.nombre }}</div>
+    <div class="ficha__header-sub">
+      {{ ficha.subcategoria.num }} {{ ficha.subcategoria.nombre }}
+      {%- if ficha.subcategoria.nombre_en %}
+      <small>{{ ficha.subcategoria.nombre_en }}</small>
+      {%- endif %}
+    </div>
+  </div>
+
+  <!-- CUERPO: PLANO + INFO -->
+  <div class="ficha__body">
+
+    <!-- SVG PLANO TÉCNICO -->
+    <div class="ficha__plano">
+      <div class="ficha__plano-label">Vista de perfil — plano técnico</div>
+      {{ svg | safe }}
+    </div>
+
+    <!-- INFO -->
+    <div class="ficha__info">
+      {%- if ficha.subcategoria.nombre_en %}
+      <div class="ficha__nombre-en">{{ ficha.subcategoria.nombre_en }}</div>
+      <div class="ficha__divider"></div>
+      {%- endif %}
+
+      <div class="ficha__info-grupo">
+        <div class="ficha__info-label">Normas aplicables</div>
+        <div class="ficha__info-val">
+          {%- for n in ficha.normas_aplicables %}
+          <span class="norma">{{ n.codigo }}</span>
+          {%- endfor %}
+        </div>
+      </div>
+
+      <div class="ficha__info-grupo">
+        <div class="ficha__info-label">Materiales disponibles</div>
+        <div class="ficha__info-val">{{ multilinea(ficha.materiales.texto) }}</div>
+      </div>
+
+      {%- for item in ficha.info %}
+      <div class="ficha__info-grupo">
+        <div class="ficha__info-label">{{ item.label }}</div>
+        <div class="ficha__info-val">{{ multilinea(item.valor) }}</div>
+      </div>
+      {%- endfor %}
+
+      <div class="ficha__info-grupo">
+        <div class="ficha__info-label">Descripción</div>
+        <div class="ficha__desc">{{ ficha.descripcion.texto }}</div>
+      </div>
+
+      <div class="ficha__info-grupo">
+        <div class="ficha__info-label">Aplicaciones típicas</div>
+        <div class="ficha__apps">
+          {%- for app in ficha.aplicaciones %}
+          <span class="ficha__app-tag">{{ app }}</span>
+          {%- endfor %}
+        </div>
+      </div>
+
+      <div class="ficha__info-grupo" style="margin-top:auto;">
+        <div class="ficha__info-label">Presentación</div>
+        <div class="ficha__info-val">{{ ficha.presentacion }}</div>
+      </div>
+    </div>
+
+  </div><!-- /ficha__body -->
+
+  <!-- TABLA DE COTAS -->
+  <div class="ficha__tabla-wrap">
+    <div class="ficha__tabla-titulo">Tabla de cotas y dimensiones</div>
+
+    <table class="cotas">
+      {%- set columnas = ficha.series[0].columnas %}
+      {%- set ncols = columnas | length %}
+      {%- set nota_cols = 3 if ncols >= 4 else 1 %}
+      <thead>
+        <tr>
+          {%- for col in columnas %}
+          <th>{{ col.label }}{% if col.sublabel %}<span class="sub">{{ col.sublabel }}</span>{% endif %}</th>
+          {%- endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {%- for serie in ficha.series %}
+        <tr class="serie-sep">
+          <td colspan="{{ ncols - nota_cols }}">{{ serie.titulo }}</td>
+          {%- if serie.nota %}
+          <td class="serie-nota" colspan="{{ nota_cols }}">{{ serie.nota }}</td>
+          {%- else %}
+          <td colspan="{{ nota_cols }}"></td>
+          {%- endif %}
+        </tr>
+        {%- for fila in serie.filas %}
+        <tr>
+          {%- for col in serie.columnas %}
+            {%- if loop.first %}
+          <td>{{ fila.d }}</td>
+            {%- elif fila.estado == 'faltante' or col.id not in fila.valores %}
+          <td class="faltante">—</td>
+            {%- else %}
+          <td>{{ celda(col, fila.valores[col.id]) }}</td>
+            {%- endif %}
+          {%- endfor %}
+        </tr>
+        {%- endfor %}
+        {%- endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PIE DE FICHA -->
+  <div class="ficha__pie">
+    <span class="ficha__pie-nota">
+      Datos orientativos. Confirmar disponibilidad y tolerancias con equipo técnico · famiq.com.ar
+    </span>
+    <span class="ficha__pie-pag">{{ pagina }}</span>
+  </div>
+
+</div>
+
+</body>
+</html>
