@@ -47,6 +47,34 @@ export async function GET(
 ) {
   const { slug } = await ctx.params;
   const url = `${baseUrl()}/familias/${encodeURIComponent(slug)}?print=1`;
+  const { searchParams } = new URL(req.url);
+  const debug = searchParams.get("debug") === "1";
+
+  if (debug) {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const out: Record<string, unknown> = {
+      cwd: process.cwd(),
+      ld_library_path: process.env.LD_LIBRARY_PATH ?? null,
+      vercel: { region: process.env.VERCEL_REGION, env: process.env.VERCEL_ENV },
+    };
+    const ls = (p: string) => {
+      try { return fs.readdirSync(p); } catch (e) { return `ERR: ${(e as Error).message}`; }
+    };
+    out.tmp = ls("/tmp");
+    out.bin_dir_packaged = ls(path.join(process.cwd(), "node_modules/@sparticuz/chromium/bin"));
+    try {
+      const chromium = (await import("@sparticuz/chromium")).default;
+      out.chromium_args = chromium.args;
+      const exe = await chromium.executablePath();
+      out.executablePath = exe;
+      out.tmp_after_extract = ls("/tmp");
+      out.exe_exists = fs.existsSync(exe);
+    } catch (e) {
+      out.chromium_error = (e as Error).message;
+    }
+    return NextResponse.json(out);
+  }
 
   try {
     // Sanity check del self-fetch antes de levantar Chromium: si la URL devuelve 401/404/5xx,
