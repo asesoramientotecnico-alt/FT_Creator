@@ -33,6 +33,14 @@ async function getBrowser() {
     return puppeteer.launch({ executablePath: systemPath, headless: true, args: ["--no-sandbox"] });
   }
 
+  // Vercel corre sobre AWS Lambda (AL2023, Node 20/22) pero NO expone AWS_EXECUTION_ENV
+  // ni AWS_LAMBDA_JS_RUNTIME. Sin eso, @sparticuz/chromium NO descomprime al2023.tar.br
+  // (que contiene libnss3.so y demás libs del sistema) y Chromium falla al arrancar.
+  // Forzamos la detección ANTES de importar el paquete (su init lee estas vars).
+  if (!process.env.AWS_EXECUTION_ENV && !process.env.AWS_LAMBDA_JS_RUNTIME) {
+    process.env.AWS_LAMBDA_JS_RUNTIME = "nodejs20.x";
+  }
+
   const chromium = (await import("@sparticuz/chromium")).default;
   return puppeteer.launch({
     args: chromium.args,
