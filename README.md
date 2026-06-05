@@ -35,5 +35,6 @@ python3 scripts/render_pdf.py                               # HTML -> PDF
 - [x] `familias/allen-cabeza-cilindrica.json` cargado a mano (datos del prototipo; `origen: humano`, `estado: borrador`, `fuente: null`)
 - [x] Pipeline `generar_ficha.py` + `render_pdf.py` → PDF de la ficha 1.1
 - [x] `generar-ficha.yml` (artifact del PDF) · `extraer-norma.yml` (stub)
+- [x] Gate 3 (densidad): ficha 1.1 entra en **una** página A4 (compactación en `styles.css`)
 - [ ] Runner self-hosted registrado (ver SETUP.md)
 - [ ] Punto 5: `extraer_norma.py` + Gate 1 (fuera de alcance de esta sesión)
