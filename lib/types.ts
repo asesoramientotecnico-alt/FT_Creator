@@ -26,6 +26,13 @@ export type Norma = {
   id: string;
   codigo: string;
   edicion: string;
+  pdf_path?: string | null;
+};
+
+export type NotaExtraccion = {
+  fila: number;     // índice en filas[]
+  columna: string;  // id de columna
+  motivo: string;   // "celda ilegible", "valor dudoso", etc.
 };
 
 export type Familia = {
