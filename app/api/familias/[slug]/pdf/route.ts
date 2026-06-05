@@ -33,16 +33,10 @@ async function getBrowser() {
     return puppeteer.launch({ executablePath: systemPath, headless: true, args: ["--no-sandbox"] });
   }
 
-  const chromium = (await import("@sparticuz/chromium-min")).default;
-  const pack = process.env.CHROMIUM_PACK_URL;
-  if (!pack) {
-    throw new Error(
-      "Falta env var CHROMIUM_PACK_URL en Vercel (pack tar.br de @sparticuz/chromium-min compatible con la versión instalada)."
-    );
-  }
+  const chromium = (await import("@sparticuz/chromium")).default;
   return puppeteer.launch({
     args: chromium.args,
-    executablePath: await chromium.executablePath(pack),
+    executablePath: await chromium.executablePath(),
     headless: true,
   });
 }
