@@ -4,9 +4,7 @@ name: Generar ficha
 # regenera el HTML y el PDF borrador y lo publica como artifact del workflow.
 # El usuario revisa el PDF (Gate 3) sobre el PR.
 #
-# NOTA: requiere el runner self-hosted (todavía NO registrado para este repo).
-# Ver SETUP.md para instalar Python 3.11+, dependencias y `playwright install chromium`
-# y registrar el runner con la label `ft-creator`.
+# Runner self-hosted registrado con label `ft-creator` (Windows, ft-creator-win).
 
 on:
   push:
@@ -31,8 +29,10 @@ on:
 
 jobs:
   generar:
-    # Runner self-hosted del patrón del sistema de auditoría existente.
     runs-on: [self-hosted, ft-creator]
+    env:
+      PYTHONIOENCODING: utf-8
+      PYTHONUTF8: 1
     steps:
       - name: Checkout
         uses: actions/checkout@v4
