@@ -102,7 +102,7 @@ export default async function FichaPage({
       </Seccion>
 
       <Seccion titulo="Plano">
-        <PlanoEditor slug={slug} svgPath={familia.svg_path} />
+        <PlanoEditor slug={slug} svgPath={familia.svg_path} svgOrigen={familia.svg_origen} />
       </Seccion>
 
       <Seccion titulo="Series dimensionales">
