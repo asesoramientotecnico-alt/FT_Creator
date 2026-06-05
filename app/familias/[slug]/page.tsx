@@ -5,6 +5,10 @@ import { loadFichaBySlug } from "@/lib/ficha-loader";
 import { supabaseServer } from "@/lib/supabase/server";
 import { DatosGeneralesForm } from "../_components/DatosGeneralesForm";
 import { SeriesEditor, type SerieLite, type TablaLite } from "../_components/SeriesEditor";
+import { TextosEditor } from "../_components/TextosEditor";
+import { PlanoEditor } from "../_components/PlanoEditor";
+import { PendientesEditor, type Pendiente } from "../_components/PendientesEditor";
+import { ValidarFamilia } from "../_components/ValidarFamilia";
 
 export const dynamic = "force-dynamic";
 
@@ -58,6 +62,14 @@ export default async function FichaPage({
     .eq("estado", "validada");
   const tablasValidadas: TablaLite[] = (tablasRaw ?? []) as any;
 
+  // Pendientes.
+  const { data: pendRaw } = await sb
+    .from("pendientes")
+    .select("id, tipo, detalle, resuelto")
+    .eq("familia_id", familia.id)
+    .order("creado_en");
+  const pendientes: Pendiente[] = (pendRaw ?? []) as any;
+
   return (
     <main style={{ maxWidth: 900, margin: "0 auto", padding: "2rem", background: "white", borderRadius: 8 }}>
       <nav style={{ fontSize: 14, marginBottom: 16 }}><Link href="/familias">← Familias</Link></nav>
@@ -89,16 +101,29 @@ export default async function FichaPage({
         />
       </Seccion>
 
+      <Seccion titulo="Plano">
+        <PlanoEditor slug={slug} svgPath={familia.svg_path} />
+      </Seccion>
+
       <Seccion titulo="Series dimensionales">
         <SeriesEditor slug={slug} series={series} tablasValidadas={tablasValidadas} />
       </Seccion>
 
       <Seccion titulo="Textos">
-        <p style={{ color: "#999", fontSize: 14, margin: 0 }}>Próximamente (M3b): descripción y aplicaciones con sugerencia IA.</p>
+        <TextosEditor
+          slug={slug}
+          initialDescripcion={familia.descripcion}
+          initialAplicaciones={familia.aplicaciones ?? []}
+          initialOrigen={familia.descripcion_origen}
+        />
       </Seccion>
 
       <Seccion titulo="Pendientes">
-        <p style={{ color: "#999", fontSize: 14, margin: 0 }}>Próximamente (M3b).</p>
+        <PendientesEditor slug={slug} pendientes={pendientes} />
+      </Seccion>
+
+      <Seccion titulo="Validación">
+        <ValidarFamilia slug={slug} estado={familia.estado} />
       </Seccion>
     </main>
   );
