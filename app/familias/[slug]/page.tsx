@@ -4,6 +4,7 @@ import { Ficha } from "@/components/ficha/Ficha";
 import { loadFichaBySlug } from "@/lib/ficha-loader";
 import { supabaseServer } from "@/lib/supabase/server";
 import { DatosGeneralesForm } from "../_components/DatosGeneralesForm";
+import { SeriesEditor, type SerieLite, type TablaLite } from "../_components/SeriesEditor";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +40,24 @@ export default async function FichaPage({
     .maybeSingle();
   if (!familia) notFound();
 
+  // Series vinculadas (con la tabla y su norma).
+  const { data: seriesRaw } = await sb
+    .from("ficha_series")
+    .select("id, sistema, nota, filas_incluidas, tabla:tablas_normativas(id, nombre, columnas, filas, norma:normas(codigo, edicion))")
+    .eq("familia_id", familia.id)
+    .order("orden");
+  const series: SerieLite[] = (seriesRaw ?? []).map((s: any) => ({
+    id: s.id, sistema: s.sistema, nota: s.nota, filas_incluidas: s.filas_incluidas,
+    tabla: s.tabla as TablaLite,
+  }));
+
+  // Tablas validadas disponibles para vincular.
+  const { data: tablasRaw } = await sb
+    .from("tablas_normativas")
+    .select("id, nombre, columnas, filas, norma:normas(codigo, edicion)")
+    .eq("estado", "validada");
+  const tablasValidadas: TablaLite[] = (tablasRaw ?? []) as any;
+
   return (
     <main style={{ maxWidth: 900, margin: "0 auto", padding: "2rem", background: "white", borderRadius: 8 }}>
       <nav style={{ fontSize: 14, marginBottom: 16 }}><Link href="/familias">← Familias</Link></nav>
@@ -71,7 +90,7 @@ export default async function FichaPage({
       </Seccion>
 
       <Seccion titulo="Series dimensionales">
-        <p style={{ color: "#999", fontSize: 14, margin: 0 }}>Próximamente (M3b): vincular tablas normativas validadas y seleccionar filas.</p>
+        <SeriesEditor slug={slug} series={series} tablasValidadas={tablasValidadas} />
       </Seccion>
 
       <Seccion titulo="Textos">
