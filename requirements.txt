@@ -1,0 +1,13 @@
+# Pipeline de fichas técnicas FAMIQ — dependencias
+# Instalar en el runner self-hosted una sola vez (ver SETUP.md):
+#   pip install -r requirements.txt
+#   playwright install chromium
+
+jinja2>=3.1
+pydantic>=2.6
+playwright>=1.40
+
+# --- Gate 1 (extracción de normas, punto 5 del milestone) ---
+# Se habilitan cuando se implemente scripts/extraer_norma.py:
+# anthropic>=0.40
+# pypdf>=4.0

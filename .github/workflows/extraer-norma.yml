@@ -1,0 +1,41 @@
+name: Extraer norma (Gate 1)
+
+# STUB — punto 5 del milestone, NO implementado en la sesión 1.
+#
+# Objetivo (cuando se implemente scripts/extraer_norma.py):
+#   trigger: push de un PDF a normas/pdf/
+#     -> la IA extrae la(s) tabla(s) dimensional(es) como JSON borrador
+#     -> si hay varias tablas aplicables, se listan en el cuerpo del PR
+#     -> abre un PR con normas/<norma>-<edicion>.json  (Gate 1)
+#   merge del PR = tabla validada como fuente de verdad.
+#
+# Requiere: runner self-hosted (ver SETUP.md) + secret ANTHROPIC_API_KEY.
+
+on:
+  push:
+    paths:
+      - "normas/pdf/**"
+  workflow_dispatch:
+
+jobs:
+  extraer:
+    runs-on: [self-hosted, ft-creator]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Pendiente de implementación
+        run: |
+          echo "::warning::extraer-norma.yml es un stub. La extracción (punto 5) aún no está implementada."
+          echo "Ver BRIEF, sección 'Gate 1', y SETUP.md."
+          exit 0
+
+      # --- Esqueleto previsto (cuando exista scripts/extraer_norma.py) ---
+      # - run: python3 -m pip install -r requirements.txt
+      # - run: python3 scripts/extraer_norma.py normas/pdf/<archivo>.pdf
+      # - uses: peter-evans/create-pull-request@v6
+      #   with:
+      #     branch: gate1/extraer-norma
+      #     title: "Gate 1: tabla normativa extraída (revisar)"
+      #     env:
+      #       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
