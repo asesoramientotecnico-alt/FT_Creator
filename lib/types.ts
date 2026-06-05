@@ -57,6 +57,7 @@ export type Serie = {
   sistema: Sistema;
   nota: string | null;
   orden: number;
+  filas_incluidas: number[] | null; // índices de filas en rango; null = todas
   tabla: TablaNormativa;
   norma: Norma;
 };
