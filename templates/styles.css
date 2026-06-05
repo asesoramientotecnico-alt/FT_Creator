@@ -3,6 +3,13 @@
    CSS compartido. Base: prototipo de referencia (ficha 1.1).
    Las variables :root reconstruyen los globales que el prototipo
    original tenía en su hoja de estilos de catálogo.
+
+   Gate 3 (ficha 1.1) — densidad: los paddings/gaps de la columna de
+   info y de la tabla de cotas se compactaron respecto del prototipo
+   para que la ficha completa (18 filas + info) entre en UNA página A4.
+   Afecta: .ficha__info, .ficha__plano, .ficha__tabla-wrap, table.cotas
+   (th/td) y tr.serie-sep. El resto (tipografías, colores, layout) es
+   idéntico al prototipo.
    ══════════════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap');
@@ -91,7 +98,7 @@ body {
 .ficha__plano {
   width: 40%;
   border-right: 1px solid #ddd;
-  padding: 7mm 6mm;
+  padding: 5.5mm 6mm;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -110,10 +117,10 @@ body {
 
 .ficha__info {
   flex: 1;
-  padding: 7mm 10mm 7mm 8mm;
+  padding: 5mm 10mm 5mm 8mm;
   display: flex;
   flex-direction: column;
-  gap: 3.5mm;
+  gap: 2.2mm;
 }
 
 .ficha__nombre-en {
@@ -191,7 +198,7 @@ body {
 
 /* ── Tabla de cotas ── */
 .ficha__tabla-wrap {
-  padding: 6mm 14mm 8mm;
+  padding: 4mm 14mm 3mm;
   flex-shrink: 0;
 }
 
@@ -226,7 +233,7 @@ table.cotas thead tr {
 }
 
 table.cotas thead th {
-  padding: 2.8mm 3mm;
+  padding: 1.8mm 3mm;
   text-align: center;
   font-weight: 700;
   font-size: 8pt;
@@ -276,7 +283,7 @@ table.cotas tbody tr:hover {
 }
 
 table.cotas td {
-  padding: 2mm 3mm;
+  padding: 1.1mm 3mm;
   text-align: center;
   color: var(--texto);
 }
@@ -309,7 +316,7 @@ tr.serie-sep td {
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-weight: 700 !important;
-  padding: 1.8mm 4mm !important;
+  padding: 1.1mm 4mm !important;
   text-align: left !important;
 }
 
