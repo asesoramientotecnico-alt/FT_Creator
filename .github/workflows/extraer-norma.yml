@@ -1,41 +1,80 @@
 name: Extraer norma (Gate 1)
 
-# STUB — punto 5 del milestone, NO implementado en la sesión 1.
+# Gate 1: el usuario sube un PDF de norma a normas/pdf/ → la IA extrae la(s)
+# tabla(s) dimensional(es) como JSON borrador → se abre un PR con
+# normas/<norma>-<edicion>.json. El merge del PR valida la tabla como fuente
+# de verdad. Si hay varias tablas aplicables, el cuerpo del PR las lista y el
+# usuario elige (editando el JSON o comentando).
 #
-# Objetivo (cuando se implemente scripts/extraer_norma.py):
-#   trigger: push de un PDF a normas/pdf/
-#     -> la IA extrae la(s) tabla(s) dimensional(es) como JSON borrador
-#     -> si hay varias tablas aplicables, se listan en el cuerpo del PR
-#     -> abre un PR con normas/<norma>-<edicion>.json  (Gate 1)
-#   merge del PR = tabla validada como fuente de verdad.
-#
-# Requiere: runner self-hosted (ver SETUP.md) + secret ANTHROPIC_API_KEY.
+# Requiere: runner self-hosted (label ft-creator) + secret ANTHROPIC_API_KEY.
 
 on:
   push:
     paths:
-      - "normas/pdf/**"
+      - "normas/pdf/**.pdf"
   workflow_dispatch:
+    inputs:
+      pdf:
+        description: "Ruta del PDF a extraer (ej: normas/pdf/iso-4762-2004.pdf)"
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   extraer:
     runs-on: [self-hosted, ft-creator]
+    env:
+      PYTHONIOENCODING: utf-8
+      PYTHONUTF8: 1
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2   # para diffear el push y detectar el/los PDF nuevos
 
-      - name: Pendiente de implementación
+      - name: Instalar dependencias
         run: |
-          echo "::warning::extraer-norma.yml es un stub. La extracción (punto 5) aún no está implementada."
-          echo "Ver BRIEF, sección 'Gate 1', y SETUP.md."
-          exit 0
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r requirements.txt
 
-      # --- Esqueleto previsto (cuando exista scripts/extraer_norma.py) ---
-      # - run: python3 -m pip install -r requirements.txt
-      # - run: python3 scripts/extraer_norma.py normas/pdf/<archivo>.pdf
-      # - uses: peter-evans/create-pull-request@v6
-      #   with:
-      #     branch: gate1/extraer-norma
-      #     title: "Gate 1: tabla normativa extraída (revisar)"
-      #     env:
-      #       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      - name: Determinar PDF(s) a procesar
+        id: pdfs
+        shell: bash
+        run: |
+          if [ -n "${{ github.event.inputs.pdf }}" ]; then
+            echo "lista=${{ github.event.inputs.pdf }}" >> "$GITHUB_OUTPUT"
+          else
+            # PDFs agregados/modificados en este push
+            lista=$(git diff --name-only --diff-filter=AM ${{ github.event.before }} ${{ github.sha }} -- 'normas/pdf/*.pdf' | tr '\n' ' ')
+            echo "lista=$lista" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Extraer tabla(s) normativa(s)
+        if: steps.pdfs.outputs.lista != ''
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        shell: bash
+        run: |
+          for pdf in ${{ steps.pdfs.outputs.lista }}; do
+            echo "::group::Extrayendo $pdf"
+            python3 scripts/extraer_norma.py "$pdf" --resumen-md _pr_body.md
+            echo "::endgroup::"
+          done
+
+      - name: Validar JSON generado
+        if: steps.pdfs.outputs.lista != ''
+        run: python3 scripts/validar.py
+
+      - name: Abrir PR con la tabla extraída (Gate 1)
+        if: steps.pdfs.outputs.lista != ''
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: gate1/extraer-norma
+          title: "Gate 1: tabla(s) normativa(s) extraída(s) — revisar antes de mergear"
+          body-path: _pr_body.md
+          add-paths: |
+            normas/*.json
+          commit-message: "Gate 1: extracción de tabla normativa (borrador IA)"
+          delete-branch: true

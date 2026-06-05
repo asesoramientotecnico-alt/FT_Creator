@@ -34,7 +34,7 @@ python3 scripts/render_pdf.py                               # HTML -> PDF
 - [x] Template Jinja2 derivado de la referencia (sin contenteditable / botones / localStorage / emojis)
 - [x] `familias/allen-cabeza-cilindrica.json` cargado a mano (datos del prototipo; `origen: humano`, `estado: borrador`, `fuente: null`)
 - [x] Pipeline `generar_ficha.py` + `render_pdf.py` → PDF de la ficha 1.1
-- [x] `generar-ficha.yml` (artifact del PDF) · `extraer-norma.yml` (stub)
+- [x] `generar-ficha.yml` (artifact del PDF) · `extraer-norma.yml` (Gate 1)
 - [x] Gate 3 (densidad): ficha 1.1 entra en **una** página A4 (compactación en `styles.css`)
-- [ ] Runner self-hosted registrado (ver SETUP.md)
-- [ ] Punto 5: `extraer_norma.py` + Gate 1 (fuera de alcance de esta sesión)
+- [x] Runner self-hosted registrado (Windows, label `ft-creator`) — `generar-ficha.yml` en verde
+- [x] Punto 5: `extraer_norma.py` + `extraer-norma.yml` (Gate 1 — extracción de normas a JSON + PR)

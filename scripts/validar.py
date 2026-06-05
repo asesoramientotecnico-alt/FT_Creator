@@ -19,7 +19,7 @@ from pydantic import ValidationError
 
 # permite ejecutar como script suelto (python scripts/validar.py)
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from schema import Ficha  # noqa: E402
+from schema import Ficha, NormaDoc  # noqa: E402
 
 RAIZ = Path(__file__).resolve().parent.parent
 
@@ -45,7 +45,39 @@ def _campos_en_borrador(ficha: Ficha) -> list[str]:
     return pend
 
 
+def validar_norma(ruta: Path) -> bool:
+    datos = json.loads(ruta.read_text(encoding="utf-8"))
+    try:
+        doc = NormaDoc.model_validate(datos)
+    except ValidationError as e:
+        print(f"✗ {ruta}: schema de NORMA INVÁLIDO")
+        print(e)
+        return False
+
+    print(f"✓ {ruta}: norma válida ({doc.norma}"
+          + (f" {doc.edicion}" if doc.edicion else "")
+          + f", {len(doc.tablas)} tabla/s, estado={doc.estado.value})")
+    for t in doc.tablas:
+        print(f"    · {t.id}: {t.titulo} — {t.aplicable} ({len(t.filas)} filas)")
+    if doc.pendientes:
+        print(f"  Pendientes para el gate humano ({len(doc.pendientes)}):")
+        for p in doc.pendientes:
+            print(f"    · ({p.tipo}) {p.pregunta}")
+    if doc.estado.value == "borrador":
+        print("  · estado = borrador (no usar como fuente hasta validar/mergear)")
+    return True
+
+
 def validar_archivo(ruta: Path) -> bool:
+    # Las normas viven en normas/ y usan otro schema.
+    try:
+        rel = ruta.resolve().relative_to(RAIZ)
+        es_norma = rel.parts[0] == "normas"
+    except ValueError:
+        es_norma = False
+    if es_norma:
+        return validar_norma(ruta)
+
     datos = json.loads(ruta.read_text(encoding="utf-8"))
     try:
         ficha = Ficha.model_validate(datos)
@@ -75,9 +107,9 @@ def main(argv: list[str]) -> int:
     if argv:
         rutas = [Path(a) for a in argv]
     else:
-        rutas = sorted((RAIZ / "familias").glob("*.json"))
+        rutas = sorted((RAIZ / "familias").glob("*.json")) + sorted((RAIZ / "normas").glob("*.json"))
         if not rutas:
-            print("No hay familias/*.json para validar.")
+            print("No hay familias/*.json ni normas/*.json para validar.")
             return 0
 
     ok = True

@@ -156,3 +156,69 @@ class Ficha(_Base):
     presentacion: str
     svg: SvgRef
     series: list[Serie]
+
+
+# ══════════════════════════════════════════════════════════════
+#  Norma (Gate 1) — tabla(s) dimensional(es) extraídas de un PDF
+# ══════════════════════════════════════════════════════════════
+#  La IA extrae el contenido; el humano valida en el PR (merge = verdad).
+#  Si la norma ofrece varias tablas aplicables (Product Grade A/B,
+#  serie gruesa/fina, etc.), se devuelven todas y el humano elige.
+
+
+class NormaColumna(_Base):
+    id: str            # ej: "dk", "k", "s", "paso"
+    label: str         # encabezado tal como aparece en la norma
+    descripcion: str   # qué representa (ej: "Ø de la cabeza")
+
+
+class NormaCelda(_Base):
+    columna_id: str
+    # valores numéricos (con punto decimal); null si la norma no lo define
+    nom: Optional[Union[int, float]] = None
+    max: Optional[Union[int, float]] = None
+    min: Optional[Union[int, float]] = None
+    # valor textual cuando no es numérico (ej: "40 TPI", "M6 × 1")
+    texto: Optional[str] = None
+
+
+class NormaFila(_Base):
+    designacion: str           # ej: "M6", '1/4"'
+    celdas: list[NormaCelda]
+
+
+class NormaTabla(_Base):
+    id: str
+    titulo: str
+    aplicable: str             # a qué aplica (grade, serie, sistema)
+    unidad: str                # ej: "mm", "in"
+    columnas: list[NormaColumna]
+    filas: list[NormaFila]
+
+
+class NormaExtraccion(_Base):
+    """Lo que devuelve la IA (salida estructurada de extraer_norma.py)."""
+    norma: str
+    edicion: Optional[str] = None
+    resumen_tablas: str        # markdown para el cuerpo del PR (Gate 1)
+    tablas: list[NormaTabla]
+
+
+class NormaExtraido(_Base):
+    modelo: str
+    fecha: str
+    pdf: str
+
+
+class NormaDoc(_Base):
+    """Documento de norma en disco: extracción + metadatos de trazabilidad."""
+    schema_version: str = "1.0"
+    norma: str
+    edicion: Optional[str] = None
+    origen: Origen = Origen.ia
+    estado: Estado = Estado.borrador
+    extraido: NormaExtraido
+    validacion: Validacion = Field(default_factory=Validacion)
+    pendientes: list[Pendiente] = Field(default_factory=list)
+    resumen_tablas: str
+    tablas: list[NormaTabla]

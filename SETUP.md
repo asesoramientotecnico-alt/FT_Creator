@@ -82,5 +82,16 @@ offline: descargar los `.woff2`, servirlos localmente y reemplazar el `@import` 
 
 | Workflow             | Trigger                                   | Qué hace                                                        | Estado            |
 |----------------------|-------------------------------------------|----------------------------------------------------------------|-------------------|
-| `generar-ficha.yml`  | push/PR a `familias/`, `normas/`, `templates/`, `scripts/` · manual | valida → HTML → PDF; sube PDF/HTML como artifact (Gates 2 y 3) | listo (falta runner) |
-| `extraer-norma.yml`  | push de PDF a `normas/pdf/` · manual      | extracción de tabla normativa → PR (Gate 1)                    | **stub** (punto 5) |
+| `generar-ficha.yml`  | push/PR a `familias/`, `normas/`, `templates/`, `scripts/` · manual | valida → HTML → PDF; sube PDF/HTML como artifact (Gates 2 y 3) | activo |
+| `extraer-norma.yml`  | push de PDF a `normas/pdf/` · manual      | la IA extrae la(s) tabla(s) dimensional(es) → PR (Gate 1)      | activo (requiere `ANTHROPIC_API_KEY`) |
+
+### Gate 1 — extracción de normas
+
+1. Subí el PDF de la norma a `normas/pdf/` (vía GitHub web: *Add file → Upload files*).
+2. El workflow `extraer-norma.yml` corre `scripts/extraer_norma.py` en el runner, que llama a la API de Anthropic (modelo `claude-opus-4-8` por defecto) y escribe `normas/<norma>-<edicion>.json` como **borrador**.
+3. Se abre un **PR** (rama `gate1/extraer-norma`) con el JSON. Si la norma tiene varias tablas aplicables (Product Grade A/B, gruesa/fina), el cuerpo del PR las lista y vos elegís cuál usar (editando el JSON o comentando).
+4. **Merge = tabla validada** como fuente de verdad. Recién entonces se reemplazan los `fuente: null` de la familia por datos trazables.
+
+> El secret **`ANTHROPIC_API_KEY`** es obligatorio para este workflow (§4). Los PDFs de normas no se versionan (`.gitignore`) por peso y copyright.
+>
+> Para que el workflow pueda **abrir el PR**, habilitá en GitHub: **Settings → Actions → General → Workflow permissions → "Read and write permissions"** y marcá **"Allow GitHub Actions to create and approve pull requests"**.
