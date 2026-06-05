@@ -55,39 +55,16 @@ export async function GET(
 ) {
   const { slug } = await ctx.params;
   const url = `${baseUrl()}/familias/${encodeURIComponent(slug)}?print=1`;
-  const { searchParams } = new URL(req.url);
-  const debug = searchParams.get("debug") === "1";
-
-  if (debug) {
-    const fs = await import("node:fs");
-    const path = await import("node:path");
-    const out: Record<string, unknown> = {
-      cwd: process.cwd(),
-      ld_library_path: process.env.LD_LIBRARY_PATH ?? null,
-      vercel: { region: process.env.VERCEL_REGION, env: process.env.VERCEL_ENV },
-    };
-    const ls = (p: string) => {
-      try { return fs.readdirSync(p); } catch (e) { return `ERR: ${(e as Error).message}`; }
-    };
-    out.tmp = ls("/tmp");
-    out.bin_dir_packaged = ls(path.join(process.cwd(), "node_modules/@sparticuz/chromium/bin"));
-    try {
-      const chromium = (await import("@sparticuz/chromium")).default;
-      out.chromium_args = chromium.args;
-      const exe = await chromium.executablePath();
-      out.executablePath = exe;
-      out.tmp_after_extract = ls("/tmp");
-      out.exe_exists = fs.existsSync(exe);
-    } catch (e) {
-      out.chromium_error = (e as Error).message;
-    }
-    return NextResponse.json(out);
-  }
+  // Reusamos la cookie de sesión del request original para que el self-fetch
+  // y puppeteer pasen el middleware autenticado.
+  const cookieHeader = req.headers.get("cookie") ?? "";
 
   try {
-    // Sanity check del self-fetch antes de levantar Chromium: si la URL devuelve 401/404/5xx,
-    // queremos ver eso como JSON, no perder 30s en networkidle0 y devolver 500 opaco.
-    const probe = await fetch(url, { method: "GET", redirect: "manual" });
+    const probe = await fetch(url, {
+      method: "GET",
+      redirect: "manual",
+      headers: cookieHeader ? { cookie: cookieHeader } : undefined,
+    });
     if (probe.status >= 400) {
       const body = await probe.text().catch(() => "");
       return NextResponse.json(
@@ -108,6 +85,9 @@ export async function GET(
     const browser = await getBrowser();
     try {
       const page = await browser.newPage();
+      if (cookieHeader) {
+        await page.setExtraHTTPHeaders({ cookie: cookieHeader });
+      }
       await page.goto(url, { waitUntil: "networkidle0", timeout: 45_000 });
       await page.emulateMediaType("print");
       const pdf = await page.pdf({

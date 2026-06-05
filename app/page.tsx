@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { supabaseAnon } from "@/lib/supabase";
+import { supabaseServer } from "@/lib/supabase/server";
+import { SignOut } from "@/components/SignOut";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const sb = supabaseAnon();
+  const sb = await supabaseServer();
+  const { data: { user } } = await sb.auth.getUser();
   const { data } = await sb
     .from("familias")
     .select("slug, categoria_num, categoria_nombre, subcategoria_num, subcategoria_nombre, estado")
@@ -13,8 +15,21 @@ export default async function Home() {
 
   return (
     <main style={{ maxWidth: 800, margin: "0 auto", padding: "2rem", background: "white", borderRadius: 8 }}>
-      <h1 style={{ marginTop: 0 }}>FAMIQ — Fichas técnicas</h1>
-      <p style={{ color: "#666" }}>M1 — Ficha estática end-to-end.</p>
+      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 16 }}>
+        <h1 style={{ margin: 0 }}>FAMIQ — Fichas técnicas</h1>
+        {user && (
+          <span style={{ fontSize: 13, color: "#666" }}>
+            {user.email} · <SignOut />
+          </span>
+        )}
+      </header>
+
+      <nav style={{ display: "flex", gap: 16, marginBottom: 16, fontSize: 14 }}>
+        <Link href="/normas">Normas</Link>
+        <Link href="/">Familias</Link>
+      </nav>
+
+      <h2 style={{ marginTop: 24, marginBottom: 8, fontSize: 18 }}>Familias</h2>
       <ul>
         {(data ?? []).map((f) => (
           <li key={f.slug}>

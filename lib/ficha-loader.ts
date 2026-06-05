@@ -1,8 +1,8 @@
-import { supabaseAnon } from "./supabase";
+import { supabaseServer } from "./supabase/server";
 import type { FichaData, Norma, Serie, TablaNormativa } from "./types";
 
 export async function loadFichaBySlug(slug: string): Promise<FichaData | null> {
-  const sb = supabaseAnon();
+  const sb = await supabaseServer();
 
   const { data: familia, error: eFam } = await sb
     .from("familias")
