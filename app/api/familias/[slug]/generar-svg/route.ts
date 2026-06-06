@@ -16,6 +16,7 @@ REGLAS DURAS:
 - Composición: pieza centrada, cotas alrededor, sin sombras ni gradientes. Estética limpia, geométrica.
 - Fondo transparente (sin <rect> de fondo).
 - Sin <script>, sin eventos, sin URLs externas, sin imágenes embebidas. Solo formas vectoriales y texto.
+- IDIOMA: cualquier texto del SVG (etiquetas auxiliares, leyendas, vistas) en CASTELLANO. Los símbolos técnicos normalizados (d, dk, k, s, L, e, P…) NO se traducen — son notación universal.
 - Tamaño total razonable: el SVG debería pesar menos de 20 KB.`;
 
 export async function POST(req: Request, ctx: { params: Promise<{ slug: string }> }) {
@@ -68,7 +69,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ slug: string }
   }
 
   const resp = await client.messages.create({
-    model: "claude-opus-4-5",
+    model: "claude-sonnet-4-6",
     max_tokens: 8192,
     system: SYSTEM,
     messages: [{ role: "user", content: userBlocks }],
