@@ -27,6 +27,7 @@ export default async function Home() {
       <nav style={{ display: "flex", gap: 16, marginBottom: 16, fontSize: 14 }}>
         <Link href="/normas">Normas</Link>
         <Link href="/familias">Familias</Link>
+        <Link href="/catalogo">Catálogo</Link>
       </nav>
 
       <h2 style={{ marginTop: 24, marginBottom: 8, fontSize: 18 }}>Familias recientes</h2>

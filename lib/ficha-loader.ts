@@ -48,3 +48,13 @@ export async function loadFichaBySlug(slug: string): Promise<FichaData | null> {
 
   return { familia, series, normas_aplicables };
 }
+
+// Carga varias fichas, en el orden de los slugs pedidos. Omite las que no existen.
+export async function loadFichas(slugs: string[]): Promise<FichaData[]> {
+  const out: FichaData[] = [];
+  for (const slug of slugs) {
+    const data = await loadFichaBySlug(slug);
+    if (data) out.push(data);
+  }
+  return out;
+}

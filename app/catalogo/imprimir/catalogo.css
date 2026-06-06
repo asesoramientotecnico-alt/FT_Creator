@@ -1,0 +1,61 @@
+/* Catálogo unificado — portada + índice como bloques A4, cada ficha en su página. */
+
+.cat-portada,
+.cat-indice {
+  width: 210mm;
+  height: 297mm;
+  margin: 0 auto;
+  box-sizing: border-box;
+  background: white;
+  page-break-after: always;
+  break-after: page;
+  font-family: 'DM Sans', Arial, sans-serif;
+  color: #1a2b3c;
+}
+
+/* Portada */
+.cat-portada {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 40mm 24mm;
+  background: linear-gradient(160deg, #1a4b8c 0%, #143a6e 100%);
+  color: white;
+}
+.cat-portada__marca {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 48pt;
+  letter-spacing: 2px;
+  margin-bottom: 8mm;
+}
+.cat-portada__titulo { font-size: 24pt; font-weight: 600; margin: 0 0 6mm; max-width: 140mm; }
+.cat-portada__sub { font-size: 13pt; opacity: 0.85; }
+.cat-portada__fecha { margin-top: auto; font-size: 11pt; opacity: 0.75; }
+
+/* Índice */
+.cat-indice { padding: 28mm 24mm; }
+.cat-indice__titulo {
+  font-size: 22pt;
+  border-bottom: 3px solid #1a4b8c;
+  padding-bottom: 4mm;
+  margin: 0 0 8mm;
+}
+.cat-indice__lista { list-style: none; padding: 0; margin: 0; }
+.cat-indice__item {
+  display: flex;
+  align-items: baseline;
+  gap: 4mm;
+  padding: 2.5mm 0;
+  border-bottom: 1px dotted #ccc;
+  font-size: 11pt;
+}
+.cat-indice__num { min-width: 16mm; color: #1a4b8c; font-weight: 600; }
+.cat-indice__nombre { flex: 1; }
+.cat-indice__borr { color: #c80; font-style: italic; font-size: 9pt; }
+.cat-indice__pag { color: #888; }
+
+/* Cada ficha en su propia página */
+.cat-ficha-wrap { page-break-after: always; break-after: page; }
+.cat-ficha-wrap:last-child { page-break-after: auto; break-after: auto; }
