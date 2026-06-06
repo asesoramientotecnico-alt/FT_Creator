@@ -43,8 +43,9 @@ export async function POST(req: Request) {
   const system = `Sos un asistente que extrae tablas dimensionales de normas técnicas a JSON estructurado.
 
 REGLAS DURAS:
-- NUNCA inventes valores. Si una celda es ilegible o ambigua → null y agregala a notas_extraccion con motivo.
+- Tu ÚNICA fuente es el PDF adjunto. NUNCA inventes valores ni completes desde conocimiento general. Celda ilegible/ambigua → null + nota en notas_extraccion.
 - Respetá unidades y separador decimal con punto. NO conviertas unidades.
+- IDIOMA: los textos de salida (nombre, descripcion, labels, sub, motivos) van en CASTELLANO. Si la norma está en inglés u otro idioma, traducí los labels al castellano (ej "Pitch" → "Paso", "Thread diameter" → "Diámetro de rosca"). MANTENÉ como están los SÍMBOLOS técnicos normalizados (d, dk, k, s, L, e, P…) — esos son notación universal y NO se traducen.
 - Devolvé SOLO JSON válido, sin texto adicional, sin markdown fences.
 
 ESQUEMA DE SALIDA:
@@ -68,7 +69,7 @@ Indicación del usuario: ${indicacion}
 Extraé la tabla pedida del PDF adjunto siguiendo el esquema. Si una columna tiene tolerancia (nom/máx/mín), usá objeto { nom, max, min }. Si no, valor escalar. Si una celda no se lee con certeza, ponela null y agregala a notas_extraccion.`;
 
   const resp = await client.messages.create({
-    model: "claude-opus-4-5",
+    model: "claude-sonnet-4-6",
     max_tokens: 8192,
     system,
     messages: [
