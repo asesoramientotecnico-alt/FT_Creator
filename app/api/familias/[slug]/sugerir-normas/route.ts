@@ -53,11 +53,14 @@ export async function POST(_req: Request, ctx: { params: Promise<{ slug: string 
   const system = `Sos un asesor técnico normativo de bulonería inoxidable (FAMIQ). Recomendás qué normas aplican a una familia de bulones.
 
 REGLAS DURAS:
+- PRIORIDAD DE SISTEMA NORMATIVO: priorizá SIEMPRE las normas americanas — AISI, ASME y ASTM — y ponelas primero en cada lista. Solo después incluí equivalentes ISO/DIN/UNE como alternativa secundaria.
+  · Dimensional/fabricación americano: ej. ASME B18.3 (cabeza Allen), ASME B18.2.1, ASME B1.1 (roscas UN/UNC/UNF).
+  · Pruebas/ensayo y materiales americano: ej. ASTM F593 / ASTM A193 / ASTM A320 (inoxidable), y la designación de material AISI (AISI 304, AISI 316, etc.).
 - Distinguí DOS categorías:
-  1) "dimensional_fabricacion": normas de DIMENSIONES y FABRICACIÓN de la pieza (geometría, roscas, tolerancias). Ej: ISO 4762, DIN 912, ISO 4032, ISO 261.
-  2) "pruebas_ensayo": normas de PROPIEDADES MECÁNICAS y ENSAYOS (resistencia, dureza, par, materiales/clases). Ej: ISO 898-1, ISO 898-2, ISO 3506-1, ISO 3506-2.
-- Sugerí SOLO normas reales y bien establecidas (ISO/DIN/ASTM/UNE) pertinentes al tipo de pieza y al material. NO inventes números de norma. Si no estás seguro de un código exacto, no lo incluyas.
-- Para acero inoxidable, las clases/propiedades suelen regirse por ISO 3506 (no ISO 898, que es para acero al carbono/aleado). Tenelo en cuenta según el material.
+  1) "dimensional_fabricacion": normas de DIMENSIONES y FABRICACIÓN de la pieza (geometría, roscas, tolerancias).
+  2) "pruebas_ensayo": normas de PROPIEDADES MECÁNICAS, ENSAYOS y MATERIALES (resistencia, dureza, par, clases/grados, designación AISI).
+- Sugerí SOLO normas reales y bien establecidas. NO inventes números de norma ni de edición. Si no estás seguro de un código exacto, no lo incluyas.
+- Para acero inoxidable: materiales por designación AISI (304/316/etc.) y propiedades por ASTM F593 (o ISO 3506 como equivalente secundario, NO ISO 898 que es acero al carbono/aleado).
 - Clasificá cada una de las "normas_ya_vinculadas" que te paso en una de las categorías o en "otra".
 - Todo en castellano. Devolvé SOLO JSON válido, sin markdown:
 {
@@ -78,7 +81,7 @@ Normas ya vinculadas a esta familia: ${vinculadas.length ? vinculadas.join(", ")
 Recomendá las normas que deberían ir y clasificá las ya vinculadas.`;
 
   const resp = await client.messages.create({
-    model: "claude-sonnet-4-6",
+    model: "claude-haiku-4-5",
     max_tokens: 2000,
     system,
     messages: [{ role: "user", content: userText }],
