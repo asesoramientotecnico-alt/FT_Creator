@@ -69,7 +69,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ slug: string }
   }
 
   const resp = await client.messages.create({
-    model: "claude-sonnet-4-6",
+    model: "claude-haiku-4-5",
     max_tokens: 8192,
     system: SYSTEM,
     messages: [{ role: "user", content: userBlocks }],

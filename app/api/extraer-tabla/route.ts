@@ -69,7 +69,7 @@ Indicación del usuario: ${indicacion}
 Extraé la tabla pedida del PDF adjunto siguiendo el esquema. Si una columna tiene tolerancia (nom/máx/mín), usá objeto { nom, max, min }. Si no, valor escalar. Si una celda no se lee con certeza, ponela null y agregala a notas_extraccion.`;
 
   const resp = await client.messages.create({
-    model: "claude-sonnet-4-6",
+    model: "claude-haiku-4-5",
     max_tokens: 8192,
     system,
     messages: [

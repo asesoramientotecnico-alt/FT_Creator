@@ -96,7 +96,7 @@ Normas técnicas adjuntas como fuente: ${referencias.join(", ")}.
 Redactá descripción y aplicaciones basadas en lo que efectivamente describen las normas.`;
 
   const resp = await client.messages.create({
-    model: "claude-sonnet-4-6",
+    model: "claude-haiku-4-5",
     max_tokens: 2000,
     system,
     messages: [{ role: "user", content: [...docs, { type: "text", text: userText }] }],
