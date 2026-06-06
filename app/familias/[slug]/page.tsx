@@ -9,6 +9,7 @@ import { TextosEditor } from "../_components/TextosEditor";
 import { PlanoEditor } from "../_components/PlanoEditor";
 import { PendientesEditor, type Pendiente } from "../_components/PendientesEditor";
 import { ValidarFamilia } from "../_components/ValidarFamilia";
+import { NormasAsistente } from "../_components/NormasAsistente";
 
 export const dynamic = "force-dynamic";
 
@@ -103,6 +104,10 @@ export default async function FichaPage({
 
       <Seccion titulo="Plano">
         <PlanoEditor slug={slug} svgPath={familia.svg_path} svgOrigen={familia.svg_origen} />
+      </Seccion>
+
+      <Seccion titulo="Asistente de normas">
+        <NormasAsistente slug={slug} />
       </Seccion>
 
       <Seccion titulo="Series dimensionales">
